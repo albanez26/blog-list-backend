@@ -8,4 +8,3 @@ test('dummy returns one', () => {
   assert.strictEqual(result, 1)
 })
 
-
