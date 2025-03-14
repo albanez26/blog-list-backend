@@ -61,6 +61,27 @@ test('title and url are defined', async () => {
     .expect(400)
 })
 
+test('successfully delete a blog', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  await api.delete(`/api/blogs/${blogsAtStart[0].id}`)
+    .expect(204)
+
+  const currentBlogs = await helper.blogsInDb()
+  assert.strictEqual(blogsAtStart.length - 1, currentBlogs.length)
+})
+
+test('update the number of likes', async () => {
+  const blogs = await helper.blogsInDb()
+  const blogToUpdate = { ...blogs[0], likes: 20 }
+  const { body: updatedBlog } = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(blogToUpdate)
+    .expect(200)
+
+  const currentBlogs = await helper.blogsInDb()
+  assert.strictEqual(currentBlogs[0].likes, updatedBlog.likes)
+})
+
 after(() => {
   mongoose.connection.close()
 })
